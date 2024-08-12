@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta charset="UTF-8" />
+
+  <head>
+    <title>Butter's Superstore</title>
+     <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body class="body">
+    <h1 style="text-align: center">I am changing this
+    <button style="font-size: 10px; margin-left: 20px" onclick="flow()">
+      Register Now!
+      </button>
+    </h1>
+    <br />
+   <img class="center" src="https://cdn.glitch.global/1199d7e4-d940-48a8-92ff-592a4d3d17a8/0e2836aa-e9ba-4069-8a46-d468f9187d8c.image.png?v=1723472029997" alt="Butters"/>
+    <br />
+    <div id="widget" class="skWidget"></div>
+
+    <script
+      type="text/javascript"
+      src="https://assets.pingone.com/davinci/latest/davinci.js"          
+    ></script>
+    <script>
+      //*** Populate the parameters below from your DaVinci environment ***/
+      const companyId = "e803309e-970f-4ad2-9c9f-3569c44a2b55";
+      const skApiKey = "3d89b7846e385a5f61508beeeacd2b3d331b128e86eb9f605df6ed1eef9dd83bc5f9a945757f6c0782d9cd4aecb935616116cd44883674d84d4ee57ade84749642d1e48e507d1548d3f3e08fd7bb5096e881610ea5cec5c5142d79f74eb2ccdeb720810371e219b12030d15490e2ee298594506c93f14eb1ec063d0ada9151f2";
+      const policyId = "9accebf86daa4f63500adb8f75df75a7"
+     
+      //*** Build the get SK Token URL. ***/
+      const skGetTokenUrl =
+        "https://orchestrate-api.pingone.com/v1/company/"+companyId+"/sdktoken";
+
+      //*** Add the API Key from your DaVinci application. ***/
+      var headers = new Headers();
+      headers.append("X-SK-API-KEY", skApiKey);
+
+      var requestOptions = {
+        method: "GET",
+        headers: headers,
+        redirect: "follow",
+      };
+      
+      function flow(){
+      //*** Retrieve SK Token ***/
+      fetch(skGetTokenUrl, requestOptions)
+        .then((response) => response.json())
+        .then((responseData) => {
+          var props = {
+            config: {
+              method: "runFlow",
+              apiRoot: "https://auth.pingone.com/",
+              accessToken: responseData.access_token,
+              companyId: companyId,
+              policyId: policyId,
+            },
+            useModal: false,
+            successCallback,
+            errorCallback,
+            onCloseModal,
+          };
+          /*** Invoke the Widget ****/
+          console.log(props);
+          davinci.skRenderScreen(
+            document.getElementsByClassName("skWidget")[0],
+            props
+          );
+        })
+        .catch((error) => console.log("error", error));
+
+      function successCallback(response) {
+        console.log(response);
+      }
+
+      function errorCallback(error) {
+        console.log(error);
+      }
+
+      function onCloseModal() {
+        console.log("onCloseModal");
+      }
+        
+      }
+      
+    </script>
+  </body>
+</html>
